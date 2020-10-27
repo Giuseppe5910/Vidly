@@ -16,6 +16,7 @@ else {
                       <thead>
                           <tr>
                               <th>Customer</th>
+                              <th>Membership Type</th>
                           </tr>
                       </thead>
 
@@ -26,6 +27,7 @@ else {
                                   <td>
                                       @Html.ActionLink(c.Name,"Details","Customer",new { id=c.Id},null)
                                   </td>
+                                  <td>@c.MembershipType.Name</td>
                               </tr>
                           }
                       </tbody>

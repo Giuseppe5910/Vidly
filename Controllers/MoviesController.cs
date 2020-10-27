@@ -1,6 +1,7 @@
 ﻿using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,27 +12,12 @@ namespace Vidly.Controllers
 {
     public class MoviesController : Controller
     {
-        // GET: Movies
-        public ActionResult Random()
+        private DBContext _context;
+        public MoviesController()
         {
-            var movie = new Movie() { Name = "Shrek"};
-            var customers = new List<Customer> 
-            { 
-                new Customer { Name="Customer1"},
-                new Customer { Name="Customer2"}
-            };
-
-            var viewModel = new RandomMovieViewModel
-            {
-                Movie = movie,
-
-                Customers = customers
-            };
-
-            return View(viewModel);
+            _context = new DBContext();
+            Database.SetInitializer<DBContext>(null);
         }
-
-        [Route("movies/relesead/{year}/{month:regex(\\d{4}):range(1,12)}")]
         public ActionResult ByReleaseDate(int year, int month)
         {
             return Content(year+"/"+month);
@@ -41,14 +27,18 @@ namespace Vidly.Controllers
         {
             return Content("Id=" + id);
         }
-
-        public ActionResult Index(int? pageIndex,string sortBy)
+        public ActionResult Details(int id)
         {
-            if (!pageIndex.HasValue)
-                pageIndex = 1;
-            if (!String.IsNullOrWhiteSpace(sortBy))
-                sortBy = "Name";
-            return Content(String.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
+            var movies = _context.Movies.SingleOrDefault(m => m.Id == id);
+            if (movies == null)
+                return HttpNotFound();
+            return View(movies);
+        }
+
+        public ViewResult Index(int? pageIndex,string sortBy)
+        {
+            var movies = _context.Movies.ToList();
+            return View(movies);
 
         }
     }
