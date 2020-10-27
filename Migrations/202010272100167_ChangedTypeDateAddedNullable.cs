@@ -3,16 +3,16 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddedGenreToMovies : DbMigration
+    public partial class ChangedTypeDateAddedNullable : DbMigration
     {
         public override void Up()
         {
-            AddColumn("dbo.Movies", "Genre", c => c.String());
+            AlterColumn("dbo.Movies", "AddedDate", c => c.DateTime());
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Movies", "Genre");
+            AlterColumn("dbo.Movies", "AddedDate", c => c.DateTime(nullable: false));
         }
     }
 }
