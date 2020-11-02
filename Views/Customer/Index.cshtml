@@ -1,35 +1,53 @@
-﻿@model IEnumerable<Vidly.Models.Customer> 
+﻿@model IEnumerable<Vidly.Models.Customer>
 
-@{ 
+@{
     ViewBag.Title = "Customers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Customers</h2>
-
+<p>@Html.ActionLink("New Customer", "New", "Customers", null, new { @class = "btn btn-primary" })</p>
 @if (!Model.Any())
 {
-                  <p>We don't have any customer yet.</p>
+    <p>We don't have any customer yet.</p>
 }
-else {
-                  <table class="table table-bordered table-hover">
-                      <thead>
-                          <tr>
-                              <th>Customer</th>
-                              <th>Membership Type</th>
-                          </tr>
-                      </thead>
+<table id="customers" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Membership Type</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
 
-                      <tbody>
-                          @foreach (var c in Model)
-                          {
-                              <tr>
-                                  <td>
-                                      @Html.ActionLink(c.Name,"Edit","Customer",new { id=c.Id},null)
-                                  </td>
-                                  <td>@c.MembershipType.Name</td>
-                              </tr>
-                          }
-                      </tbody>
-                  </table>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(c.Name, "Edit", "Customer", new { id = c.Id }, null)
+                </td>
+                <td>@c.MembershipType.Name</td>
+                <td>
+                    <button data-customer-id="@c.Id" class="btn-link js-delete">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts
+{
+    <script>
+        $("#customers").on("click", ".js-delete", function () {
+            var button = $(this);
+            if (confirm("Are you sure you want to delete this customer?"))
+                $.ajax({
+                    url: "/api/customers/" + button.attr("data-customer-id"),
+                    method: "DELETE",
+                    success: function () {
+                        button.parents("tr").remove();
+                    }
+                });
+        });
+    </script>
 }
